@@ -1,0 +1,2 @@
+timestamp,left_dist,right_dist,front_dist,lateral_error,linear_cmd,angular_cmd,gyro_z,accel_x,accel_y,x_pos,y_pos,theta
+1771674559.0103707,2.153,2.4295,4.181,0.2765,0.15,-0.03317999839782715,0.0,0.0,0.0,327,300,0.0
