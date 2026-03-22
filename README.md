@@ -15,8 +15,40 @@ This project uses the following primary sensor:
 
 - **Intel RealSense Depth Camera D455**
 -----
+## How It Works
 
+The navigation system follows a lightweight perception-to-control pipeline using RGB, depth, and IMU data from the Intel RealSense D455.
 
+1. The camera publishes RGB, depth, and IMU streams.
+2. The navigation node reads the depth image and extracts a horizontal sensing band from the scene.
+3. It estimates the corridor structure by comparing left and right depth measurements.
+4. A lateral error is computed from the difference between the left and right sides.
+5. A frontal depth region is analyzed to detect nearby obstacles ahead of the robot.
+6. If the path ahead is clear, the robot moves forward while applying steering corrections to remain centered.
+7. If an obstacle is detected within a safety threshold, the robot stops forward motion and rotates to find a safer direction.
+8. The estimated pose is updated using IMU yaw and commanded motion, then published as TF and path data.
+9. Runtime metrics such as pose and velocity are logged to CSV for later analysis.
+
+## Obstacle Handling
+
+The system performs reactive obstacle handling using depth information from the front region of the camera view.
+
+- When the forward path is clear, the robot continues moving while correcting its heading.
+- When an obstacle appears close to the robot, the controller stops forward motion and turns in place to avoid collision.
+- This allows the robot to respond to changes in the environment during runtime, including obstacles that enter its path while it is moving.
+
+This implementation is designed as a lightweight reactive navigation approach for indoor environments such as corridors and narrow passages.
+
+## Navigation Behavior
+
+In practical operation, the robot:
+- follows visible free space using depth-based edge balance
+- stays approximately centered between surrounding boundaries
+- reacts to obstacles detected in front of it
+- updates and publishes its trajectory continuously
+- records navigation metrics for evaluation and debugging
+
+------
 **1.Hybrid Visual Navigation Node**
 
 The main navigation node processes RGB, depth, and IMU streams to perform reactive navigation. It estimates lateral corridor balance from depth data, detects frontal obstacles, and publishes velocity commands accordingly.
